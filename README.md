@@ -1,5 +1,7 @@
 # Written 2 – Functions and Memory
 
+This assignment is due by 11:59pm on Monday, April 18.
+
 ## When to Garbage Collect
 
 In the Garbage assignment, we trigger collection only when out of memory.  Some
@@ -83,13 +85,13 @@ expression's variables, and puts that address in `EBP`.  This frame pointer has
 the special value `0` for its previous pointer.
 
 The net effect of these changes is to put all function call information (other
-than return pointers) on the _heap_.
+than return pointers and addresses of frames) on the _heap_.
 
 
 ### Question A:
 
 For each of the following scenarios, discuss the tradeoffs this approach would
-have in terms of memory and time needed:
+have in terms of memory and time needed.  Hint – draw pictures.
 
 - Evaluating a function body that creates 10 closures, each of which refers to
   5 free variables.  For example:
