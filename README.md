@@ -30,38 +30,65 @@ for `arity` + `#locals` elements:
     --------------------------------------------------------------------
     ```
 
-    Then, push onto the stack the address of this frame object, copy the arguments
-    to the call into the first _n_ elements (where _n_ is the number of arguments,
-    and may be smaller than _N_).  Then `call` the function.
+    Then, push onto the stack the address of this frame object, copy the
+    arguments to the call into the first `arity` elements.  Then `call` the
+    function.
 
 
 3.  When _called_, a function pushes the current value of `EBP`, and then sets
 `EBP` to the address of the frame object it was passed.  All local variable and
 argument references are performed by offset from `EBP` into the frame object.
 Instead of restoring free variables from the closure onto the stack, free
-variables are compiled to use the _previous pointer_ to look up the right
-location.
+variables are compiled to use the _previous pointer_ to look up the correct
+location.  (This means that for each variable, compiler will track how many
+nested `lambda` expressions above it was bound in, and traverse that many
+previous pointers to find it.)
+
+4.  When the main program starts, it allocates a frame object for the main
+expression's variables, and puts that address in `EBP`.
+
+The net effect of these changes is to put all function call information (other
+than return pointers) on the _heap_.
 
 
+### Question A:
 
-```
-|---------------|
-| old frame ptr |
-|---------------|
-|   return ptr  |
-|---------------|
-|   frame ptr   |
-|---------------|
-| old frame ptr |
-|---------------|
-|   return ptr  |
-|---------------|
-|   frame ptr   |
-|---------------|
-|      ...      |
-|---------------|
-```
+For each of the following scenarios, discuss the tradeoffs this approach would
+have in terms of memory and time needed:
 
+- Evaluating a function body that creates 10 closures, each of which refers to
+  5 free variables.  For example:
+
+  ```
+  let f = (lambda a, b, c, d, e:
+    let g0 = (lambda: a + b + c + d + e),
+        g1 = (lambda: a + b + c + d + e),
+        g2 = (lambda: a + b + c + d + e),
+        g3 = (lambda: a + b + c + d + e),
+        g4 = (lambda: a + b + c + d + e),
+        g5 = (lambda: a + b + c + d + e),
+        g6 = (lambda: a + b + c + d + e),
+        g7 = (lambda: a + b + c + d + e),
+        g8 = (lambda: a + b + c + d + e),
+        g9 = (lambda: a + b + c + d + e) in
+    (g0, g1, g2, g3, g4, g5, g6, g7, g8, g9) in
+
+  f(1, 2, 3, 4, 5)[0]()
+  ```
+
+- Evaluating a function body that was nested 5 functions deep and refers to a
+  variable that was an argument to the outermost function repeatedly, for
+  example:
+
+  ```
+  let f = (lambda x: (lambda: (lambda: (lambda: (lambda: x + x + x + x))))) in
+  f(10)()()()()
+  ```
+
+### Question B:
+
+Does this layout of function call information and closures afford us any more
+flexibility in how we implement variables?  Why or why not?
 
 
 ## Variable-Arity Functions
