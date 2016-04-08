@@ -1,5 +1,15 @@
 # Written 2 – Functions and Memory
 
+## Variable-Arity Functions
+
+Many languages support _variable-arity_ functions.  For example, in Python, an
+asterisk before the final argument indicates that it will hold all additional
+arguments that are provided.  If too few arguments are provided, it is still an
+error.  See `variable.py` for some examples.
+
+Design and describe a calling convention for variable arity functions added to
+Egg-Eater.
+
 ## Heap-allocated Stack Frames and Linked Closures
 
 Consider this alternate stack layout strategy for allocating function call
@@ -90,16 +100,5 @@ have in terms of memory and time needed:
 Does this layout of function call information and closures afford us any more
 flexibility in how we implement variables?  Why or why not?
 
-
-## Variable-Arity Functions
-
-Many languages support _variable-arity_ functions.  For example, in Python, an
-asterisk before the final argument indicates that it will hold all additional
-arguments that are provided.  If too few arguments are provided, it is still an
-error.  See `variable.py` for some examples.
-
-Design and describe a calling convention for variable arity functions added to
-Egg-Eater.  You're free to consider the linked stack implementation above, or
-the implementation we've been using in 
 
 
