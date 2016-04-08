@@ -1,6 +1,6 @@
 # Written 2 – Functions and Memory
 
-## Linked Stacks
+## Heap-allocated Stack Frames and Linked Closures
 
 Consider this alternate stack layout strategy for allocating function call
 information:
