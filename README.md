@@ -1,5 +1,16 @@
 # Written 2 – Functions and Memory
 
+## When to Garbage Collect
+
+In the Garbage assignment, we trigger collection only when out of memory.  Some
+languages, like Java, provide a runtime function that triggers garbage
+collection manually:
+[System.gc()](https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#gc--).
+
+Are there any benefits to running the garbage collector before the heap is
+full, and/or triggered by the user's program?  For simplicity, assume our
+mark/compact implementation for the collector.  Why or why not?
+
 ## Variable-Arity Functions
 
 Many languages support _variable-arity_ functions.  For example, in Python, an
@@ -8,7 +19,19 @@ arguments that are provided.  If too few arguments are provided, it is still an
 error.  See `variable.py` for some examples.
 
 Design and describe a calling convention for variable arity functions added to
-Egg-Eater.
+Egg-Eater (so using global `def` declarations, not closures).  Assume the same
+syntax, so a variable-arity function is declared with an asterisk before the
+last parameter.  This should evaluate to `(2, 3)`, for instance:
+
+```
+def f(x, *y):
+  y
+f(1, 2, 3)
+```
+
+Describe what in the implementation of the compiler you would need to change,
+what effects this would have on the rest of the language, and give examples of
+the new instructions that would be produced for function calls.
 
 ## Heap-allocated Stack Frames and Linked Closures
 
@@ -18,9 +41,10 @@ information:
 1. When a closure is _created_, no longer store the count of free variables or
 the values of free variables themselves.  Instead, store two other words:
 
-      - One that contains the number of _local variables_ in the function
+      - One that contains the number of _local variables_ in the function (e.g.
+        the result of `count_vars` on the body)
       - Another that contains the address of the current frame object (described
-        momentarily)
+        in the next step)
 
     ```
     ---------------------------------------------------------
@@ -50,12 +74,13 @@ for `arity` + `#locals` elements:
 argument references are performed by offset from `EBP` into the frame object.
 Instead of restoring free variables from the closure onto the stack, free
 variables are compiled to use the _previous pointer_ to look up the correct
-location.  (This means that for each variable, compiler will track how many
+location.  (This means that for each variable, the compiler will track how many
 nested `lambda` expressions above it was bound in, and traverse that many
 previous pointers to find it.)
 
 4.  When the main program starts, it allocates a frame object for the main
-expression's variables, and puts that address in `EBP`.
+expression's variables, and puts that address in `EBP`.  This frame pointer has
+the special value `0` for its previous pointer.
 
 The net effect of these changes is to put all function call information (other
 than return pointers) on the _heap_.
