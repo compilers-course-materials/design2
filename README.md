@@ -108,7 +108,7 @@ have in terms of memory and time needed.  Hint – draw pictures.
         g7 = (lambda: a + b + c + d + e),
         g8 = (lambda: a + b + c + d + e),
         g9 = (lambda: a + b + c + d + e) in
-    (g0, g1, g2, g3, g4, g5, g6, g7, g8, g9) in
+    (g0, g1, g2, g3, g4, g5, g6, g7, g8, g9)) in
 
   f(1, 2, 3, 4, 5)[0]()
   ```
